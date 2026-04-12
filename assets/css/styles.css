@@ -2870,3 +2870,113 @@ body{
   }
 }
 
+
+/* =========================================
+   SAMSUNG / ANDROID SCROLL HOTFIX
+   added by ChatGPT after device-scroll review
+   ========================================= */
+html,
+body{
+  width:100%;
+  max-width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:auto;
+}
+
+body{
+  position:relative;
+}
+
+/* safer viewport handling on Android */
+.hero,
+.hero.hero--editorial{
+  min-height:100vh;
+}
+
+@supports (min-height: 100svh){
+  .hero,
+  .hero.hero--editorial{
+    min-height:100svh;
+  }
+}
+
+@supports (min-height: 100dvh){
+  .hero,
+  .hero.hero--editorial{
+    min-height:100dvh;
+  }
+}
+
+/* prevent decorative layers from intercepting gestures */
+body::before,
+.page-noise,
+.hero__backdrop,
+.hero__backdrop::after,
+.hero.hero--editorial::before,
+.hero.hero--editorial::after,
+.hero-transition,
+.hero-transition::before,
+.mood-glow{
+  pointer-events:none;
+}
+
+/* mobile menu should only catch taps when open */
+@media (max-width: 840px){
+  .nav__menu{
+    pointer-events:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .nav__menu.is-open{
+    pointer-events:auto;
+  }
+}
+
+/* Samsung-friendly mobile scrolling layer */
+@media (max-width: 840px){
+  html,
+  body{
+    height:auto;
+    min-height:100%;
+    overflow-x:hidden;
+    overflow-y:auto;
+    touch-action:pan-y;
+  }
+
+  body{
+    position:relative;
+  }
+
+  .hero,
+  .hero.hero--editorial{
+    overflow:clip;
+  }
+
+  @supports not (overflow: clip){
+    .hero,
+    .hero.hero--editorial{
+      overflow:hidden;
+    }
+  }
+
+  .container{
+    width:min(calc(100% - 24px), var(--container));
+  }
+}
+
+@media (max-width: 640px){
+  .nav{
+    inset:12px 0 auto;
+  }
+
+  .hero{
+    padding-top:104px;
+  }
+
+  .hero.hero--editorial{
+    padding-top:108px;
+  }
+}
