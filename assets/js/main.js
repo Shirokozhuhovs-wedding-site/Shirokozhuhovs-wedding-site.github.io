@@ -106,7 +106,7 @@ window.addEventListener('load', () => {
 
 setTimeout(showAllRevealItems, 800);
 
-const weddingDate = new Date('2026-06-27T15:00:00').getTime();
+const weddingDate = new Date(2026, 5, 27, 15, 0, 0).getTime();
 
 function updateCountdown() {
   const now = Date.now();
