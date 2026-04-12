@@ -1,3 +1,4 @@
+```js
 const nav = document.getElementById('siteNav');
 const toggle = document.querySelector('.nav__toggle');
 const menu = document.getElementById('navMenu');
@@ -11,43 +12,75 @@ function closeMenu() {
   toggle.setAttribute('aria-expanded', 'false');
 }
 
+function openMenu() {
+  if (!menu || !toggle) return;
+  menu.classList.add('is-open');
+  toggle.setAttribute('aria-expanded', 'true');
+}
+
 if (toggle && menu) {
   toggle.addEventListener('click', () => {
-    const open = menu.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(open));
+    const open = menu.classList.contains('is-open');
+    if (open) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
   });
 
-  navLinks.forEach(link => link.addEventListener('click', closeMenu));
+  navLinks.forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!menu.classList.contains('is-open')) return;
+    const clickedInsideMenu = menu.contains(event.target);
+    const clickedToggle = toggle.contains(event.target);
+    if (!clickedInsideMenu && !clickedToggle) {
+      closeMenu();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 840) {
+      closeMenu();
+    }
+  }, { passive: true });
 }
 
 window.addEventListener('scroll', () => {
-  if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 20);
+  if (nav) {
+    nav.classList.toggle('is-scrolled', window.scrollY > 20);
+  }
 }, { passive: true });
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
       observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.14 });
-
-revealItems.forEach((item) => observer.observe(item));
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    const id = entry.target.id;
-    navLinks.forEach((link) => {
-      link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
     });
-  });
-}, { rootMargin: '-35% 0px -50% 0px', threshold: 0 });
+  }, { threshold: 0.14 });
 
-sections.forEach((section) => {
-  if (section.id) sectionObserver.observe(section);
-});
+  revealItems.forEach((item) => observer.observe(item));
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      navLinks.forEach((link) => {
+        link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+      });
+    });
+  }, { rootMargin: '-35% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach((section) => {
+    if (section.id) sectionObserver.observe(section);
+  });
+} else {
+  revealItems.forEach((item) => item.classList.add('is-visible'));
+}
 
 const weddingDate = new Date('2026-06-27T15:00:00').getTime();
 
@@ -82,3 +115,4 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
+```
