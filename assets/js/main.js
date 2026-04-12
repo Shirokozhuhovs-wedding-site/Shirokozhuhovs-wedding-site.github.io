@@ -54,33 +54,57 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.14 });
+/* reveal animation safe mode for iPhone/Safari */
+let revealObserver = null;
 
-  revealItems.forEach((item) => observer.observe(item));
-
-  const sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const id = entry.target.id;
-      navLinks.forEach((link) => {
-        link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
-      });
-    });
-  }, { rootMargin: '-35% 0px -50% 0px', threshold: 0 });
-
-  sections.forEach((section) => {
-    if (section.id) sectionObserver.observe(section);
-  });
-} else {
+function showAllRevealItems() {
   revealItems.forEach((item) => item.classList.add('is-visible'));
 }
+
+if ('IntersectionObserver' in window) {
+  try {
+    revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        if (revealObserver) {
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    revealItems.forEach((item) => revealObserver.observe(item));
+  } catch (e) {
+    showAllRevealItems();
+  }
+
+  try {
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        navLinks.forEach((link) => {
+          link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+        });
+      });
+    }, { rootMargin: '-35% 0px -50% 0px', threshold: 0 });
+
+    sections.forEach((section) => {
+      if (section.id) sectionObserver.observe(section);
+    });
+  } catch (e) {
+    /* do nothing */
+  }
+} else {
+  showAllRevealItems();
+}
+
+/* fallback: if Safari does not trigger observer, content still appears */
+window.addEventListener('load', () => {
+  setTimeout(showAllRevealItems, 300);
+});
+
+setTimeout(showAllRevealItems, 800);
 
 const weddingDate = new Date('2026-06-27T15:00:00').getTime();
 
