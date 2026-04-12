@@ -1,4 +1,4 @@
-```js
+
 const nav = document.getElementById('siteNav');
 const toggle = document.querySelector('.nav__toggle');
 const menu = document.getElementById('navMenu');
@@ -141,4 +141,4 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
-```
+
