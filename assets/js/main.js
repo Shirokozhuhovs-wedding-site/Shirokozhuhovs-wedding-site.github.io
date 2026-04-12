@@ -111,14 +111,21 @@ const weddingDate = new Date(2026, 5, 27, 15, 0, 0).getTime();
 function updateCountdown() {
   const now = Date.now();
   const diff = weddingDate - now;
-  const daysEl = document.getElementById('days');
-  const hoursEl = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
+const daysEl = document.getElementById('days');
+const hoursEl = document.getElementById('hours');
+const minutesEl = document.getElementById('minutes');
+const secondsEl = document.getElementById('seconds');
 
+/* 27 июня 2026, 15:00 по локальному времени устройства */
+const weddingDate = new Date(2026, 5, 27, 15, 0, 0);
+
+function updateCountdown() {
   if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
 
-  if (diff <= 0) {
+  const now = new Date();
+  const diff = weddingDate.getTime() - now.getTime();
+
+  if (isNaN(diff) || diff <= 0) {
     daysEl.textContent = '00';
     hoursEl.textContent = '00';
     minutesEl.textContent = '00';
@@ -126,10 +133,11 @@ function updateCountdown() {
     return;
   }
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / (60 * 60 * 24));
+  const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
 
   daysEl.textContent = String(days).padStart(2, '0');
   hoursEl.textContent = String(hours).padStart(2, '0');
@@ -139,4 +147,4 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
-```
+
