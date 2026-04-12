@@ -54,7 +54,6 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-/* reveal animation safe mode for iPhone/Safari */
 let revealObserver = null;
 
 function showAllRevealItems() {
@@ -99,18 +98,13 @@ if ('IntersectionObserver' in window) {
   showAllRevealItems();
 }
 
-/* fallback: if Safari does not trigger observer, content still appears */
 window.addEventListener('load', () => {
   setTimeout(showAllRevealItems, 300);
 });
 
 setTimeout(showAllRevealItems, 800);
 
-const weddingDate = new Date(2026, 5, 27, 15, 0, 0).getTime();
-
-function updateCountdown() {
-  const now = Date.now();
-  const diff = weddingDate - now;
+/* countdown */
 const daysEl = document.getElementById('days');
 const hoursEl = document.getElementById('hours');
 const minutesEl = document.getElementById('minutes');
@@ -147,4 +141,4 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
-
+```
